@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-
+    final media=MediaQuery.of(context).orientation;
     return Scaffold(
       appBar: AppBar(
         leading:const Icon(Icons.backpack_outlined),
@@ -56,26 +56,42 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-
-            GridView.builder(
-              shrinkWrap: true,
-              physics:const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: context.height*.0012,
-                ),
-                itemCount: categories.length-1,
-                itemBuilder: (context,index)=> _item(context, index),
-            ),
+            media==Orientation.portrait?portrait(context):landScape(context),
 
 
             Padding(
-                padding: EdgeInsetsDirectional.only(start: context.width*.25),
-                child: _item(context, categories.length-1))
+                padding: EdgeInsetsDirectional.only(start: media==Orientation.portrait? context.width*.25:context.width*.0),
+                child: _itemPortrait(context, categories.length-1))
           ],
         ),
       ),
     );
+  }
+
+  GridView portrait(BuildContext context) {
+    return GridView.builder(
+            shrinkWrap: true,
+            physics:const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: context.height*.0012,
+              ),
+              itemCount: categories.length-1,
+              itemBuilder: (context,index)=> _itemPortrait(context, index),
+          );
+  }
+  GridView landScape(BuildContext context) {
+    final media=MediaQuery.of(context).orientation;
+    return GridView.builder(
+            shrinkWrap: true,
+            physics:const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: media==Orientation.portrait? context.width*.001:context.width*.0013
+              ),
+              itemCount: categories.length-1,
+              itemBuilder: (context,index)=> _itemPortrait(context, index),
+          );
   }
 
   Container carouselSliderItem(BuildContext context, int index) {
@@ -92,27 +108,28 @@ class HomeScreen extends StatelessWidget {
                 );
   }
 
-  Padding _item(BuildContext context, int index) {
+  Padding _itemPortrait(BuildContext context, int index) {
+    final media=MediaQuery.of(context).orientation;
     return Padding(
-                padding:  EdgeInsets.all(context.width*.02),
+                padding:  EdgeInsets.all(media==Orientation.portrait? context.width*.02:context.width*.02),
                 child: Stack(
                   children: [
                     Container(
-                      height: context.height*.28,
+                      height:media==Orientation.portrait? context.height*.28:context.height*.7,
                     ),
                    Positioned(
-                     top: context.width*.12,
+                     top:media==Orientation.portrait? context.width*.12:context.width*.1,
 
                      child: CircleAvatar(
-                       radius: context.width*.18,
+                       radius:media==Orientation.portrait? context.width*.18:context.width*.1,
                        backgroundColor: Colors.blue,
                        child: CircleAvatar(
-                         radius: context.width*.17,
+                         radius:media==Orientation.portrait? context.width*.17:context.width*.09,
                          backgroundColor: Colors.white,
                          child: Column(
                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                            children: [
-                             Icon(categories[index].iconData,size: context.width*.15,),
+                             Icon(categories[index].iconData,size:media==Orientation.portrait? context.width*.18:context.width*.09,),
                              Text(categories[index].txt,style:const TextStyle(fontWeight: FontWeight.bold),)
                            ],
                          ),
@@ -120,8 +137,9 @@ class HomeScreen extends StatelessWidget {
                      ),
                    ),
                     Positioned(
-                        left: context.width*.3,
-                        child: Image.asset("assets/images/4295332.png",width: context.width*.2,)),
+                        left:media==Orientation.portrait? context.width*.3:context.width*.14,
+                        bottom:media==Orientation.portrait? null:context.height*.36,
+                        child: Image.asset("assets/images/4295332.png",width: media==Orientation.portrait? context.width*.2:context.width*.15,)),
                   ],
                 ),
               );
